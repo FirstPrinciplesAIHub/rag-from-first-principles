@@ -147,7 +147,7 @@ After completing Day 1, I can clearly explain:
 
 
 
-🧠 Day 1 Mental Lock-In
+##🧠 Day 1 Mental Lock-In
 
 If someone asked you:
 

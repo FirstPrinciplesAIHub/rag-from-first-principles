@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+venv/
+
+# Pytest
+.pytest_cache/
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Local data
+data/

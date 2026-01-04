@@ -1,11 +1,12 @@
 # day05_context_to_answer/answer_generator.py
+from infrastructure.llm.base import LLM
 from .schemas import Answer, Citation
 from .policies import GenerationPolicy
 from .prompt import render_prompt
 from .citation_validator import validate_citations
 
 
-def generate_answer(*, context_pack, llm, policy: GenerationPolicy) -> Answer:
+def generate_answer(*, context_pack, llm:LLM, policy: GenerationPolicy) -> Answer:
     # --------------------------------------------------
     # Backward-compatible context validity
     # --------------------------------------------------

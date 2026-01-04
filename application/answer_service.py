@@ -50,6 +50,7 @@ def answer_query_with_policy(
             presentation_reason=None,
         )
 
+        
         TraceRecorder.record(trace)
 
         return FinalAnswerResponse(
@@ -70,7 +71,7 @@ def answer_query_with_policy(
         llm=llm,
     )
 
-    claims = verification_report.claim_results
+    claims = verification_report.claims
 
     # -------------------------
     # Day 7 — Citation alignment
@@ -85,10 +86,10 @@ def answer_query_with_policy(
     # Day 8 — Presentation gate
     # -------------------------
     decision = decide_presentation(
-        policy=presentation_policy,
-        claim_results=claims,
-        citation_results=citation_results,
-    )
+            policy=presentation_policy,
+            claim_results=verification_report.claim_results,  # ✅ EntailmentResult
+            citation_results=citation_results,
+        )
 
     # -------------------------
     # Build stats (Day 09 input)
@@ -102,8 +103,30 @@ def answer_query_with_policy(
             1 for r in citation_results
             if r.status == AlignmentStatus.ALIGNED
         ),
+        
     )
 
+    # -------------------------
+    # Day 12 — LLM usage & cost
+    # -------------------------
+    usage = llm.get_last_usage()
+
+    if usage is not None:
+        stats = PipelineStats(
+            # Existing stats
+            approved_chunks=stats.approved_chunks,
+            dropped_chunks=stats.dropped_chunks,
+            total_context_chars=stats.total_context_chars,
+            claim_count=stats.claim_count,
+            aligned_citations=stats.aligned_citations,
+
+            # NEW Day 12 fields
+            prompt_tokens=usage.prompt_tokens,
+            completion_tokens=usage.completion_tokens,
+            total_tokens=usage.total_tokens,
+            cost_usd=usage.cost_usd,
+        )
+    
     # -------------------------
     # Final response
     # -------------------------

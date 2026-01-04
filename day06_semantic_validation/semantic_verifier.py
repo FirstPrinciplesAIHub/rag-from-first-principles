@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from .claims import Claim, extract_claims
 from .entailment import (
@@ -17,10 +17,21 @@ from .entailment import (
 class VerificationReport:
     """
     Final semantic verification outcome for an answer.
+
+    IMPORTANT:
+    - `claims` are the semantic objects extracted from the answer
+    - `claim_results` are the entailment evaluations of those claims
     """
+
     passed: bool
+
+    # Day 6 semantic objects (USED by Day 7)
+    claims: List[Claim]
+
+    # Day 6 evaluation artifacts
     claim_results: List[EntailmentResult]
-    failure_reason: str = None
+
+    failure_reason: Optional[str] = None
 
 
 def verify_answer(
@@ -41,6 +52,7 @@ def verify_answer(
         return VerificationReport(
             passed=True,
             claim_results=[],
+            claims= claims,
             failure_reason=None,
         )
 
@@ -66,6 +78,7 @@ def verify_answer(
             return VerificationReport(
                 passed=False,
                 claim_results=entailment_results,
+                claims= claims,
                 failure_reason=(
                     f"No approved context for claim: '{claim.text}'"
                 ),
@@ -84,6 +97,7 @@ def verify_answer(
             return VerificationReport(
                 passed=False,
                 claim_results=entailment_results,
+                claims= claims,
                 failure_reason=(
                     f"Claim not entailed: '{claim.text}' "
                     f"(label={result.label})"
@@ -92,6 +106,7 @@ def verify_answer(
 
     return VerificationReport(
         passed=True,
+        claims=claims, 
         claim_results=entailment_results,
         failure_reason=None,
     )

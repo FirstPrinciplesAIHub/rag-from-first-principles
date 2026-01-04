@@ -77,18 +77,25 @@ class PipelineStats:
     These are safe to log, aggregate, and monitor.
     """
 
+    # -------- Day 4 --------
     retrieved_chunks: Optional[int] = None
     approved_chunks: Optional[int] = None
     dropped_chunks: Optional[int] = None
-
     total_context_chars: Optional[int] = None
 
+    # -------- Day 6 --------
     claim_count: Optional[int] = None
     entailed_claims: Optional[int] = None
 
+    # -------- Day 7 --------
     aligned_citations: Optional[int] = None
     misaligned_citations: Optional[int] = None
 
+    # -------- Day 12 (NEW) --------
+    prompt_tokens: Optional[int] = None
+    completion_tokens: Optional[int] = None
+    total_tokens: Optional[int] = None
+    cost_usd: Optional[float] = None
 
 # ---------------------------------------------------------
 # Final trace (one per user query)

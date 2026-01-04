@@ -17,7 +17,7 @@ Design principles:
 from typing import List, Dict, Optional
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Tuple
-
+from infrastructure.retrieval.retriever import retrieve_chunks
 
 @dataclass(frozen=True)
 class ContextPolicy:
@@ -601,8 +601,61 @@ def order_chunks(chunks: List[Dict]) -> List[Dict]:
 
     return sorted(chunks, key=order_key)
 
+def compute_stats(
+    approved_chunks: list[dict],
+    dropped_chunks: list[dict],
+) -> dict:
+    """
+    Compute deterministic, explainable statistics about context assembly.
 
+    This function MUST:
+    - be pure
+    - have no side effects
+    - make no decisions
+    """
+
+    total_chars = sum(
+        len(chunk.get("text", ""))
+        for chunk in approved_chunks
+    )
+
+    return {
+        "approved_count": len(approved_chunks),
+        "dropped_count": len(dropped_chunks),
+        "total_chars": total_chars,
+    }
+    
 def build_context_pack(
+    *,
+    query: str,
+    policy: ContextPolicy,
+    approved_chunks: list[dict],
+    dropped_chunks: list[dict],
+) -> ContextPack:
+    """
+    Day 4 FINAL step.
+    Builds a ContextPack from already-decided chunks.
+    """
+
+    ordered = order_chunks(approved_chunks)
+    stats = compute_stats(approved_chunks, dropped_chunks)
+
+    is_valid = (
+        len(ordered) >= policy.min_chunks
+        and stats["total_chars"] >= policy.min_chars
+    )
+
+    return ContextPack(
+        query=query,
+        policy=policy,
+        approved_chunks=ordered,
+        dropped_chunks=dropped_chunks,
+        is_valid=is_valid,
+        invalid_reason=None if is_valid else "insufficient_context",
+        stats=stats,
+    )
+
+def build_context_pack_from_chunks(
     query: str,
     policy: ContextPolicy,
     approved_chunks: list[Dict],

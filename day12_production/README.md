@@ -117,3 +117,11 @@ python3 -m application.app
 This system is architecturally complete. Anything beyond this point would be optimization or productization, not core design.
 
 **Correctness first. Always.**
+
+
+## 🧠 RAG From First Principles — Architecture
+
+The diagram below shows the full end-to-end pipeline, from document ingestion
+to production enforcement, built incrementally over Days 01–12.
+
+![RAG From First Principles Architecture](docs/images/rag_architecture_diagram.png)
